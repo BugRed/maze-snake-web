@@ -7,8 +7,7 @@ const ctx = canvas.getContext('2d');
 const size = 30;
 //crianto a snake como array
 const snake = [
-    { x: 200, y: 200 },
-    { x: 230, y: 200 }
+    { x: 270, y: 240},
 ];
 
 let direction, loopId;
@@ -35,9 +34,9 @@ const moveSnake = () => {
     const head = snake.at(-1);
 
     //mover para direita
-    if (direction == "right") {
+      if (direction == "right") {
         snake.push({ x: head.x + size, y: head.y })
-    };
+    }
 
     //mover para esquerda
     if (direction == "left") {
@@ -58,6 +57,7 @@ const moveSnake = () => {
     snake.shift();
 };
 
+
 //Loop de criação e manutenção do jogo
 const gameLoop = () => {
 
@@ -76,6 +76,25 @@ const gameLoop = () => {
 };
 
 gameLoop();
+
+//adicionando eventos ao html, fução para baixo
+document.addEventListener("keydown", ({ key }) => {
+    if(key == "ArrowRight" && direction != "left"){
+        direction = "right"
+    }
+
+    if(key == "ArrowLeft" && direction != "right"){
+        direction = "left"
+    }
+
+    if(key == "ArrowDown" && direction != "up"){
+        direction = "down"
+    } 
+
+    if(key == "ArrowUp" && direction != "down"){
+        direction = "up"
+    } 
+});
 
 
 
