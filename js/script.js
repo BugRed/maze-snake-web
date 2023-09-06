@@ -7,19 +7,19 @@ const ctx = canvas.getContext('2d');
 const size = 30;
 //crianto a snake como array
 const snake = [
-    {x: 200, y: 200},
-    {x: 230, y: 200},
-    {x: 260, y: 200},
-    {x: 290, y: 200}
+    { x: 200, y: 200 },
+    { x: 230, y: 200 }
 ];
+
+let direction, loopId;
 
 const drawSnake = () => {
     //dando cor ao desenho
     ctx.fillStyle = "#483D8B";//DarkSlateBlue
-    
+
     snake.forEach((position, index) => {
-        
-        if(index == snake.length - 1){
+
+        if (index == snake.length - 1) {
             ctx.fillStyle = "#6A5ACD";//SlateBlue
         }
         //desenhando o objeto
@@ -27,7 +27,58 @@ const drawSnake = () => {
     });
 };
 
-drawSnake();
+const moveSnake = () => {
+
+    if (!direction) return
+
+    //acessando o ultimo espaço do array
+    const head = snake.at(-1);
+
+    //mover para direita
+    if (direction == "right") {
+        snake.push({ x: head.x + size, y: head.y })
+    };
+
+    //mover para esquerda
+    if (direction == "left") {
+        snake.push({ x: head.x - size, y: head.y })
+    };
+
+    //mover para cima
+    if (direction == "up") {
+        snake.push({ x: head.x, y: head.y - size })
+    };
+
+    //mover para baixo
+    if (direction == "down") {
+        snake.push({ x: head.x, y: head.y + size })
+    };
+
+    //apagando o primeiro espaço do array
+    snake.shift();
+};
+
+//Loop de criação e manutenção do jogo
+const gameLoop = () => {
+
+    //limpando o loop anterior
+    clearInterval(loopId);
+    //limpando tela antes de mover e desenhar
+    ctx.clearRect(0, 0, 600, 600);
+
+    moveSnake();
+    drawSnake();
+
+    loopId = setTimeout(() => {
+        gameLoop()
+    }, 300);
+
+};
+
+gameLoop();
+
+
+
 
 
 
