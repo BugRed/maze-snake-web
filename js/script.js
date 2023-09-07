@@ -3,6 +3,11 @@ const canvas = document.querySelector('canvas');
 //Capturando contexto da propriedade
 const ctx = canvas.getContext('2d');
 
+const score = document.querySelector('.score--value');
+const finalScore = document.querySelector('.final-score > span');
+const menu = document.querySelector('.menu-screen');
+const buttonPlay = document.querySelector('.btn-play');
+
 const audio = new Audio('../assets/audio.mp3');
 
 //tamanho da snake
@@ -10,6 +15,11 @@ const size = 30;
 //crianto a snake como array
 const snake = [
     { x: 270, y: 240 },
+    { x: 300, y: 240 },
+    { x: 330, y: 240 },
+    { x: 360, y: 240 },
+    { x: 390, y: 240 },
+    { x: 420, y: 240 },
 ];
 
 //gerando um numero aleatorio com minimo e maximo
@@ -146,6 +156,26 @@ const checkEat = () => {
     }
 }
 
+const checkCollison = () => {
+    const head = snake[snake.length -1];
+    const canvasLimit = canvas.width - size;
+    const neckIndex = snake.length - 2;
+
+    const wallCollision = head.x < 0 || head.x > canvasLimit || head.y < 0 || head.y > canvasLimit;
+
+    const selfCollision = snake.find((position, index)=>{
+        return index < neckIndex && position.x == head.x && position.y == head.y
+    })
+
+    if (wallCollision || selfCollision){
+        gameOver();
+    }
+};
+
+const gameOver = () => {
+    direction = undefined;
+}
+
 //Loop de criação e manutenção do jogo
 const gameLoop = () => {
 
@@ -159,6 +189,7 @@ const gameLoop = () => {
     moveSnake();
     drawSnake();
     checkEat();
+    checkCollison();
 
     loopId = setTimeout(() => {
         gameLoop()
