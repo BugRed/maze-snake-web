@@ -3,14 +3,59 @@ const canvas = document.querySelector('canvas');
 //Capturando contexto da propriedade
 const ctx = canvas.getContext('2d');
 
+const audio = new Audio('../assets/audio.mp3');
+
 //tamanho da snake
 const size = 30;
 //crianto a snake como array
 const snake = [
-    { x: 270, y: 240},
+    { x: 270, y: 240 },
 ];
 
+//gerando um numero aleatorio com minimo e maximo
+const randomNumber = (min, max) => {
+    return Math.round(Math.random() * (max - min) + min);
+};
+
+//gerando uma posição aleatoria
+const randomPosition = () => {
+    const number = randomNumber(0, canvas.width - size);
+    return Math.round(number / 30) * 30;
+};
+
+//gerando uma cor aleatoria
+const randomColor = () => {
+    const red = randomNumber(0, 255);
+    const green = randomNumber(0, 255);
+    const blue = randomNumber(0, 255);
+
+    return `rgb(${red}, ${green}, ${blue})`;
+}
+
+//criando a comida item interativo
+const food = {
+    x: randomPosition(),
+    y: randomPosition(),
+    color: randomColor()
+};
+
+//criando direção, id de loop
 let direction, loopId;
+
+
+const drawFood = () => {
+
+    //desestruturando para usar dentro da function
+    const { x, y, color } = food;
+    //efeito de borrar e sombra
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, size, size);
+    //zerar o blur para não atingir outros elementos da tela
+    ctx.shadowBlur = 0;
+
+}
 
 const drawSnake = () => {
     //dando cor ao desenho
@@ -34,7 +79,7 @@ const moveSnake = () => {
     const head = snake.at(-1);
 
     //mover para direita
-      if (direction == "right") {
+    if (direction == "right") {
         snake.push({ x: head.x + size, y: head.y })
     }
 
@@ -57,6 +102,49 @@ const moveSnake = () => {
     snake.shift();
 };
 
+const drawGrid = () => {
+    //definindo tamanho e cor do desenho em linha
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#191919 ";
+
+    //definindo começo e fim
+    for (let i = 30; i < canvas.width; i += size) {
+
+        ctx.beginPath();
+        ctx.lineTo(i, 0);
+        ctx.lineTo(i, 600);
+        //função que efetivamente desenha
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineTo(0, i);
+        ctx.lineTo(600, i);
+        ctx.stroke();
+    }
+
+
+
+}
+
+const checkEat = () => {
+    const head = snake[snake.length - 1];
+
+    if (head.x == food.x && head.y == food.y) {
+        snake.push(head);
+        audio.play();
+
+        let x = randomPosition();
+        let y = randomPosition();
+
+        while(snake.find((position)=>  position.x == x && position.y == y)){
+            x = randomPosition();
+            y = randomPosition();
+        }
+        food.x = x;
+        food.y = y;
+        food.color = randomColor();
+    }
+}
 
 //Loop de criação e manutenção do jogo
 const gameLoop = () => {
@@ -66,8 +154,11 @@ const gameLoop = () => {
     //limpando tela antes de mover e desenhar
     ctx.clearRect(0, 0, 600, 600);
 
+    drawGrid();
+    drawFood();
     moveSnake();
     drawSnake();
+    checkEat();
 
     loopId = setTimeout(() => {
         gameLoop()
@@ -79,21 +170,21 @@ gameLoop();
 
 //adicionando eventos ao html, fução para baixo
 document.addEventListener("keydown", ({ key }) => {
-    if(key == "ArrowRight" && direction != "left"){
+    if (key == "ArrowRight" && direction != "left") {
         direction = "right"
     }
 
-    if(key == "ArrowLeft" && direction != "right"){
+    if (key == "ArrowLeft" && direction != "right") {
         direction = "left"
     }
 
-    if(key == "ArrowDown" && direction != "up"){
+    if (key == "ArrowDown" && direction != "up") {
         direction = "down"
-    } 
+    }
 
-    if(key == "ArrowUp" && direction != "down"){
+    if (key == "ArrowUp" && direction != "down") {
         direction = "up"
-    } 
+    }
 });
 
 
