@@ -8,7 +8,7 @@ const finalScore = document.querySelector('.final-score > span');
 const menu = document.querySelector('.menu-screen');
 const buttonPlay = document.querySelector('.btn-play');
 
-const audioTakeBall = new Audio('../assets/audio.mp3');
+const audioFood = new Audio('./assets/audio.mp3');
 // const audioGameOver = new Audio('../assets/game-over.wav');
 
 //tamanho da snake
@@ -141,7 +141,7 @@ const checkEat = () => {
     if (head.x == food.x && head.y == food.y) {
         incrementScore();
         snake.push(head);
-        audioTakeBall.play();
+        audioFood.play();
 
         let x = randomPosition();
         let y = randomPosition();
